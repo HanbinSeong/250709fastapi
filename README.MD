@@ -96,3 +96,4 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 2. 시크릿 키 입력
 3. 권장설치옵션
 4. `admin` 계정 설정
+5. ㅇㅇ
