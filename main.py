@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
 from datetime import datetime
+import pytz
 
 app = FastAPI(
     title="FastAPI 기본 애플리케이션",
@@ -53,7 +54,7 @@ board_id_counter = 1
 @app.post("/board", response_model=BoardOut, status_code=status.HTTP_201_CREATED)
 async def create_board(board: BoardCreate):
     global board_id_counter
-    new = BoardOut(id=board_id_counter, date=datetime.now(), **board.dict())
+    new = BoardOut(id=board_id_counter, date=datetime.now(pytz.timezone("Asia/Seoul")), **board.dict())
     board_db.append(new)
     board_id_counter += 1
     return new
@@ -92,7 +93,7 @@ async def editpost_board(id: int, board: BoardUpdate):
     for idx, item in enumerate(board_db):
         if item.id == id:
             item.title = board.title if board.title else item.title
-            item.date = board.date if board.date else datetime.now()
+            item.date = board.date if board.date else datetime.now(pytz.timezone("Asia/Seoul"))
             item.content = board.content if board.content else item.content
             board_db[idx] = item
             return item
