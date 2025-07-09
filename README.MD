@@ -84,6 +84,7 @@ sudo apt install -y docker.io
 sudo systemctl enable docker
 sudo systemctl start docker
 sudo usermod -aG docker $USER
+sudo usermod -aG docker jenkins
 ```
 
 ### 젠킨스 KEY값 확인
@@ -91,9 +92,32 @@ sudo usermod -aG docker $USER
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
-### 웹상에서 젠킨스 설치
+### 젠킨스 세팅
 1. `{퍼블릭DNS}:8080` 접속
 2. 시크릿 키 입력
 3. 권장설치옵션
 4. `admin` 계정 설정
-5. ㅇㅇd
+5. `New Item` - `Pipeline` 생성
+6. `Triggers - GitHub hook trigger for GITScm polling` 설정
+7. `Pipeline`
+   - Definition: Pipeline script from SCM
+   - SCM: Git
+   - Repo URL: <깃허브 Repo URL>
+   - Branch Specifier: */main
+8. <개인 Repo 설정>
+   - `Webhooks` > Payload URL(Default="http://<퍼블릭 DNS 값>:8080/github-webhook/") > `SSL`: Disable
+  
+#### 보안설정
+Jenkins 크레덴셜에서 깃허브 token값 등을 추가해서 SSL, Credential 설정으로 권한있는 사용자만 접근할 수 있도록 설정가능
+이번 실습에선 전체 플로우를 이해하기위해 보안관련 설정은 생략하고 진행
+
+### Repo `root/`에 `Jenkinsfile`, `Dockerfile` 준비
+
+#### `Dockerfile` 주의사항
+**가용용량 없으면 배포 안됨!!**
+EC2에 할당된 스토리지 용량 문제때문에 `Docker 이미지`를 주기(배포시)적으로 기존 이미지를 정리하고 배포해야함. 
+나는 `Dockerfile`에서 명령을 내렸는데, `Jenkinsfile`에서 자동화 처리해도 되는듯.
+
+
+# FastAPI 서버포트 `8000`
+기존 프론트 API 호출 BASE URL값을 수정해야함 → 이번 케이스는 `<퍼블릭 DNS>:8000`
