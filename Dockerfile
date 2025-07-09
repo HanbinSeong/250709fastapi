@@ -1,4 +1,4 @@
-FROM python:3.13.2-slim
+FROM python:3.12-slim
 
 # 빌드 도구 설치
 RUN apt-get update \
